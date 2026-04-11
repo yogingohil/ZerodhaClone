@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../AuthContext";
-import "./Signup.css";
+import "./Login.css";
 
-function Signup() {
+function Login() {
     const [formData, setFormData] = useState({
-        name: "",
         email: "",
-        password: "",
-        phone: ""
+        password: ""
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
@@ -27,17 +25,16 @@ function Signup() {
         setMessage("");
 
         try {
-            const response = await axios.post("http://localhost:3002/signup", formData);
-            setMessage("Signup successful! Welcome to Zerodha Clone.");
-            login(response.data.user); // Auto-login after signup
-            setFormData({ name: "", email: "", password: "", phone: "" });
-            // Redirect to dashboard app after successful signup and pass the email for sync
+            const response = await axios.post("http://localhost:3002/login", formData);
+            setMessage("Login successful! Welcome back.");
+            login(response.data.user); // Update auth context
+            // Redirect to dashboard app after successful login and pass the email for sync
             window.location.replace(`http://localhost:3001/?email=${encodeURIComponent(response.data.user.email)}`);
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setMessage(error.response.data.message);
             } else {
-                setMessage("An error occurred during signup. Please try again.");
+                setMessage("An error occurred during login. Please try again.");
             }
         } finally {
             setLoading(false);
@@ -45,10 +42,10 @@ function Signup() {
     };
 
     return (
-        <div className="signup-container">
-            <div className="signup-form">
-                <h1>Create Your Account</h1>
-                <p>Join Zerodha Clone and start your trading journey</p>
+        <div className="login-container">
+            <div className="login-form">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your Zerodha Clone account</p>
 
                 {message && (
                     <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
@@ -57,19 +54,6 @@ function Signup() {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Full Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter your full name"
-                        />
-                    </div>
-
                     <div className="form-group">
                         <label htmlFor="email">Email Address</label>
                         <input
@@ -84,19 +68,6 @@ function Signup() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="phone">Phone Number</label>
-                        <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            required
-                            placeholder="Enter your phone number"
-                        />
-                    </div>
-
-                    <div className="form-group">
                         <label htmlFor="password">Password</label>
                         <input
                             type="password"
@@ -105,26 +76,25 @@ function Signup() {
                             value={formData.password}
                             onChange={handleChange}
                             required
-                            placeholder="Create a password"
-                            minLength="6"
+                            placeholder="Enter your password"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="signup-btn"
+                        className="login-btn"
                         disabled={loading}
                     >
-                        {loading ? "Creating Account..." : "Sign Up"}
+                        {loading ? "Signing In..." : "Sign In"}
                     </button>
                 </form>
 
-                <div className="login-link">
-                    <p>Already have an account? <a href="/login">Login here</a></p>
+                <div className="signup-link">
+                    <p>Don't have an account? <a href="/signup">Sign up here</a></p>
                 </div>
             </div>
         </div>
     );
 }
 
-export default Signup;
+export default Login;
