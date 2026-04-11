@@ -1,0 +1,155 @@
+.user-profile {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+  margin-right: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.user-basic-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.user-id-display {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.account-status {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.profile-details {
+  display: grid;
+  gap: 30px;
+}
+
+.detail-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.detail-section h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 10px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-item label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item span {
+  font-size: 16px;
+  color: #333;
+  font-weight: 600;
+}
+
+.status-active {
+  color: #00d09c !important;
+  font-weight: bold;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  color: #666;
+  font-size: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .avatar-large {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-profile {
+    padding: 10px;
+  }
+
+  .detail-section {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    padding: 15px;
+  }
+
+  .avatar-large {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .user-basic-info h3 {
+    font-size: 20px;
+  }
+}

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
+import { useAuth } from "../AuthContext";
+import "./Menu.css";
 
 const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const handleMenuClick = (index) => {
     setSelectedMenu(index);
@@ -14,12 +17,20 @@ const Menu = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
+  // Generate user ID like Kite (first letter of name + some numbers)
+  const generateUserId = (name, id) => {
+    if (!name || !id) return "USERID";
+    const firstLetter = name.charAt(0).toUpperCase();
+    const userId = id.slice(-4); // Last 4 characters of user ID
+    return `${firstLetter}${userId}`;
+  };
+
   const menuClass = "menu";
   const activeMenuClass = "menu selected";
 
   return (
     <div className="menu-container">
-      <img src="logo.png" style={{ width: "50px" }} />
+      <img src="logo.png" style={{ width: "50px" }} alt="Zerodha Logo" />
       <div className="menus">
         <ul>
           <li>
@@ -69,6 +80,17 @@ const Menu = () => {
           <li>
             <Link
               style={{ textDecoration: "none" }}
+              to="/portfolio"
+              onClick={() => handleMenuClick(7)}
+            >
+              <p className={selectedMenu === 7 ? activeMenuClass : menuClass}>
+                Portfolio
+              </p>
+            </Link>
+          </li>
+          <li>
+            <Link
+              style={{ textDecoration: "none" }}
               to="funds"
               onClick={() => handleMenuClick(4)}
             >
@@ -91,8 +113,24 @@ const Menu = () => {
         </ul>
         <hr />
         <div className="profile" onClick={handleProfileClick}>
-          <div className="avatar">ZU</div>
-          <p className="username">USERID</p>
+          <div className="avatar">
+            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+          </div>
+          <p className="username">
+            {user ? generateUserId(user.name, user.id) : "USERID"}
+          </p>
+          {isProfileDropdownOpen && (
+            <div className="profile-dropdown">
+              <Link to="/profile" style={{ textDecoration: "none", color: "inherit" }}>
+                <p style={{ cursor: "pointer", padding: "8px 0" }}>Profile</p>
+              </Link>
+              <p>{user?.name || "User"}</p>
+              <p>{user?.email || ""}</p>
+              <button onClick={logout} className="logout-btn">
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

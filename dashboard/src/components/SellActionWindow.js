@@ -2,17 +2,17 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import GeneralContext from "./GeneralContext";
 import { useAuth } from "../AuthContext";
-import "./BuyActionWindow.css";
+import "./SellActionWindow.css";
 
-const BuyActionWindow = ({ uid }) => {
+const SellActionWindow = ({ uid }) => {
   const [stockQuantity, setStockQuantity] = useState(1);
   const [stockPrice, setStockPrice] = useState(0.0);
   const generalContext = useContext(GeneralContext);
   const { user } = useAuth();
 
-  const handleBuyClick = async () => {
+  const handleSellClick = async () => {
     if (!user) {
-      alert("Please login before placing a buy order.");
+      alert("Please login before placing a sell order.");
       return;
     }
 
@@ -29,24 +29,24 @@ const BuyActionWindow = ({ uid }) => {
         name: uid,
         qty,
         price,
-        mode: "BUY",
+        mode: "SELL",
         userId: user._id
       });
-      alert("Buy order placed successfully.");
+      alert("Sell order placed successfully.");
     } catch (error) {
-      console.error("Buy order failed:", error);
-      alert("Error placing buy order. Please try again.");
+      console.error("Sell order failed:", error);
+      alert("Error placing sell order. Please try again.");
     } finally {
-      generalContext.closeBuyWindow();
+      generalContext.closeSellWindow();
     }
   };
 
   const handleCancelClick = () => {
-    generalContext.closeBuyWindow();
+    generalContext.closeSellWindow();
   };
 
   return (
-    <div className="container" id="buy-window" draggable="true">
+    <div className="container" id="sell-window" draggable="true">
       <div className="regular-order">
         <div className="inputs">
           <fieldset>
@@ -76,8 +76,8 @@ const BuyActionWindow = ({ uid }) => {
       <div className="buttons">
         <span>Margin required ₹140.65</span>
         <div>
-          <button className="btn btn-blue" onClick={handleBuyClick}>
-            Buy
+          <button className="btn btn-red" onClick={handleSellClick}>
+            Sell
           </button>
           <button className="btn btn-grey" onClick={handleCancelClick}>
             Cancel
@@ -88,4 +88,4 @@ const BuyActionWindow = ({ uid }) => {
   );
 };
 
-export default BuyActionWindow;
+export default SellActionWindow;

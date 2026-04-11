@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
@@ -13,17 +14,94 @@ import {
   MoreHoriz,
 } from "@mui/icons-material";
 
-import { watchlist } from "../data/data";
+import { watchlist as staticWatchlist } from "../data/data";
 import { DoughnutChart } from "./DoughnoutChart";
-
-const labels = watchlist.map((subArray) => subArray["name"]);
+import "./WatchList.css";
 
 const WatchList = () => {
+  const [watchlist, setWatchlist] = useState(staticWatchlist);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch live data for watchlist stocks
+  const fetchLiveData = async () => {
+    setLoading(true);
+    try {
+      const updatedWatchlist = await Promise.all(
+        staticWatchlist.map(async (stock) => {
+          try {
+            // Try BSE first, fallback to NSE
+            let response = await axios.get(`http://localhost:3002/api/stocks/${stock.name}?exchange=BSE`);
+            
+            if (response.data && response.data.priceInfo) {
+              const liveData = response.data;
+              const currentPrice = liveData.priceInfo.lastPrice || stock.price;
+              const previousClose = liveData.priceInfo.previousClose || currentPrice;
+              const change = currentPrice - previousClose;
+              const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0;
+              
+              return {
+                ...stock,
+                price: currentPrice,
+                percent: `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`,
+                isDown: change < 0,
+                live: true
+              };
+            }
+          } catch (bseError) {
+            // Fallback to NSE
+            try {
+              let response = await axios.get(`http://localhost:3002/api/stocks/${stock.name}?exchange=NSE`);
+              
+              if (response.data && response.data.priceInfo) {
+                const liveData = response.data;
+                const currentPrice = liveData.priceInfo.lastPrice || stock.price;
+                const previousClose = liveData.priceInfo.previousClose || currentPrice;
+                const change = currentPrice - previousClose;
+                const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0;
+                
+                return {
+                  ...stock,
+                  price: currentPrice,
+                  percent: `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`,
+                  isDown: change < 0,
+                  live: true
+                };
+              }
+            } catch (nseError) {
+              console.log(`Could not fetch live data for ${stock.name}`);
+            }
+          }
+          
+          // Return original data if live data fetch fails
+          return { ...stock, live: false };
+        })
+      );
+      
+      setWatchlist(updatedWatchlist);
+    } catch (error) {
+      console.error("Error fetching live data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch live data on component mount
+    fetchLiveData();
+    
+    // Set up interval to fetch live data every 30 seconds
+    const interval = setInterval(fetchLiveData, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const labels = watchlist.map((subArray) => subArray["name"]);
+
   const data = {
     labels,
     datasets: [
       {
-        label: "Price",
+        label: "Stock Price",
         data: watchlist.map((stock) => stock.price),
         backgroundColor: [
           "rgba(255, 99, 132, 0.5)",
@@ -83,7 +161,7 @@ const WatchList = () => {
           placeholder="Search eg:infy, bse, nifty fut weekly, gold mcx"
           className="search"
         />
-        <span className="counts"> {watchlist.length} / 50</span>
+        <span className="counts"> {watchlist.length} / 50 {loading && <span className="loading">⟳</span>}</span>
       </div>
 
       <ul className="list">
@@ -113,7 +191,9 @@ const WatchListItem = ({ stock }) => {
   return (
     <li onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className="item">
-        <p className={stock.isDown ? "down" : "up"}>{stock.name}</p>
+        <p className={stock.isDown ? "down" : "up"}>
+          {stock.name} {stock.live && <span className="live-indicator">●</span>}
+        </p>
         <div className="itemInfo">
           <span className="percent">{stock.percent}</span>
           {stock.isDown ? (
@@ -131,9 +211,39 @@ const WatchListItem = ({ stock }) => {
 
 const WatchListActions = ({ uid }) => {
   const generalContext = useContext(GeneralContext);
+  const navigate = useNavigate();
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const handleBuyClick = () => {
     generalContext.openBuyWindow(uid);
+  };
+
+  const handleSellClick = () => {
+    generalContext.openSellWindow(uid);
+  };
+
+  const handleAnalyticsClick = () => {
+    navigate(`/analytics/${uid}`);
+  };
+
+  const handleMoreClick = () => {
+    setShowMoreMenu(!showMoreMenu);
+  };
+
+  const handleAddToWatchlist = () => {
+    // Already in watchlist, maybe show message
+    alert(`${uid} is already in your watchlist`);
+    setShowMoreMenu(false);
+  };
+
+  const handleSetAlert = () => {
+    alert(`Set alert for ${uid} - Feature coming soon!`);
+    setShowMoreMenu(false);
+  };
+
+  const handleMarketDepth = () => {
+    alert(`Market depth for ${uid} - Feature coming soon!`);
+    setShowMoreMenu(false);
   };
 
   return (
@@ -153,6 +263,7 @@ const WatchListActions = ({ uid }) => {
           placement="top"
           arrow
           TransitionComponent={Grow}
+          onClick={handleSellClick}
         >
           <button className="sell">Sell</button>
         </Tooltip>
@@ -161,16 +272,26 @@ const WatchListActions = ({ uid }) => {
           placement="top"
           arrow
           TransitionComponent={Grow}
+          onClick={handleAnalyticsClick}
         >
           <button className="action">
             <BarChartOutlined className="icon" />
           </button>
         </Tooltip>
-        <Tooltip title="More" placement="top" arrow TransitionComponent={Grow}>
-          <button className="action">
-            <MoreHoriz className="icon" />
-          </button>
-        </Tooltip>
+        <div className="more-container">
+          <Tooltip title="More" placement="top" arrow TransitionComponent={Grow}>
+            <button className="action" onClick={handleMoreClick}>
+              <MoreHoriz className="icon" />
+            </button>
+          </Tooltip>
+          {showMoreMenu && (
+            <div className="more-menu">
+              <button onClick={handleAddToWatchlist}>Add to Watchlist</button>
+              <button onClick={handleSetAlert}>Set Alert</button>
+              <button onClick={handleMarketDepth}>Market Depth</button>
+            </div>
+          )}
+        </div>
       </span>
     </span>
   );

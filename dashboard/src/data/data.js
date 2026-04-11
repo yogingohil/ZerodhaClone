@@ -53,6 +53,108 @@ export const watchlist = [
     percent: "1.04%",
     isDown: false,
   },
+  {
+    name: "HDFCBANK",
+    price: 1522.35,
+    percent: "0.11%",
+    isDown: false,
+  },
+  {
+    name: "ICICIBANK",
+    price: 987.65,
+    percent: "-0.85%",
+    isDown: true,
+  },
+  {
+    name: "BAJFINANCE",
+    price: 6543.21,
+    percent: "2.15%",
+    isDown: false,
+  },
+  {
+    name: "MARUTI",
+    price: 8765.43,
+    percent: "-1.25%",
+    isDown: true,
+  },
+  {
+    name: "TITAN",
+    price: 2345.67,
+    percent: "1.75%",
+    isDown: false,
+  },
+  {
+    name: "ADANIPORTS",
+    price: 876.54,
+    percent: "-0.95%",
+    isDown: true,
+  },
+  {
+    name: "LT",
+    price: 2345.67,
+    percent: "0.65%",
+    isDown: false,
+  },
+  {
+    name: "AXISBANK",
+    price: 987.65,
+    percent: "-1.15%",
+    isDown: true,
+  },
+  {
+    name: "KOTAKBANK",
+    price: 1876.54,
+    percent: "1.35%",
+    isDown: false,
+  },
+  {
+    name: "ITC",
+    price: 207.9,
+    percent: "0.80%",
+    isDown: false,
+  },
+  {
+    name: "BHARTIARTL",
+    price: 541.15,
+    percent: "2.99%",
+    isDown: false,
+  },
+  {
+    name: "NTPC",
+    price: 156.78,
+    percent: "-0.45%",
+    isDown: true,
+  },
+  {
+    name: "POWERGRID",
+    price: 234.56,
+    percent: "0.95%",
+    isDown: false,
+  },
+  {
+    name: "COALINDIA",
+    price: 345.67,
+    percent: "-1.05%",
+    isDown: true,
+  },
+  {
+    name: "GRASIM",
+    price: 1876.54,
+    percent: "1.25%",
+    isDown: false,
+  },
+  {
+    name: "ULTRACEMCO",
+    price: 7654.32,
+    percent: "-0.75%",
+    isDown: true,
+  },
+  {
+    name: "NESTLEIND",
+    price: 18765.43,
+    percent: "0.55%",
+    isDown: false,
+  },
 ];
 
 // holdings
