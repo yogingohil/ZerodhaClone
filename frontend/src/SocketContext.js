@@ -11,42 +11,18 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [stockData, setStockData] = useState({});
-  const [indicesData, setIndicesData] = useState({});
 
   useEffect(() => {
     const socketInstance = io(API_URL);
 
     socketInstance.on('connect', () => {
-      console.log('Dashboard connected to server');
+      console.log('Connected to server');
       setIsConnected(true);
     });
 
     socketInstance.on('disconnect', () => {
-      console.log('Dashboard disconnected from server');
+      console.log('Disconnected from server');
       setIsConnected(false);
-    });
-
-    // Listen for stock updates
-    socketInstance.on('stock-update', (data) => {
-      setStockData(prev => ({
-        ...prev,
-        [data.symbol]: data.data
-      }));
-    });
-
-    // Listen for indices updates
-    socketInstance.on('indices-update', (data) => {
-      setIndicesData(data);
-    });
-
-    // Listen for errors
-    socketInstance.on('stock-error', (error) => {
-      console.error('Stock data error:', error);
-    });
-
-    socketInstance.on('indices-error', (error) => {
-      console.error('Indices data error:', error);
     });
 
     setSocket(socketInstance);
@@ -71,8 +47,6 @@ export const SocketProvider = ({ children }) => {
   const value = {
     socket,
     isConnected,
-    stockData,
-    indicesData,
     subscribeToStock,
     subscribeToIndices
   };

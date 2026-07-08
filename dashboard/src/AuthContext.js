@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_URL } from './config';
 
 const AuthContext = createContext();
 
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (email) {
-      fetch(`http://localhost:3002/user?email=${encodeURIComponent(email)}`)
+      fetch(`${API_URL}/user?email=${encodeURIComponent(email)}`)
         .then((response) => response.json())
         .then((data) => {
           if (data && data.user) {
