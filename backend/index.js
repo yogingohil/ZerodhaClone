@@ -336,9 +336,11 @@ app.post("/signup", async (req, res) => {
       message: "User created successfully",
       user: {
         id: newUser._id,
+        _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        phone: newUser.phone
+        phone: newUser.phone,
+        funds: newUser.funds || 0
       }
     });
   } catch (error) {
@@ -368,9 +370,11 @@ app.post("/login", async (req, res) => {
       message: "Login successful",
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone
+        phone: user.phone,
+        funds: user.funds || 0
       }
     });
   } catch (error) {
@@ -399,9 +403,11 @@ app.get("/user", async (req, res) => {
     res.json({
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone
+        phone: user.phone,
+        funds: user.funds || 0
       }
     });
   } catch (error) {
@@ -413,12 +419,17 @@ app.get("/user", async (req, res) => {
 // Funds management routes
 app.post("/addFunds", async (req, res) => {
   try {
-    const { userId, amount } = req.body;
-    const user = await UserModel.findById(userId);
+    const { userId, email, amount } = req.body;
+    let user;
+    if (userId) {
+      user = await UserModel.findById(userId);
+    } else if (email) {
+      user = await UserModel.findOne({ email });
+    }
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.funds += parseFloat(amount);
+    user.funds = (user.funds || 0) + parseFloat(amount);
     await user.save();
     res.json({ message: "Funds added successfully", funds: user.funds });
   } catch (error) {
@@ -428,16 +439,21 @@ app.post("/addFunds", async (req, res) => {
 
 app.post("/withdrawFunds", async (req, res) => {
   try {
-    const { userId, amount } = req.body;
-    const user = await UserModel.findById(userId);
+    const { userId, email, amount } = req.body;
+    let user;
+    if (userId) {
+      user = await UserModel.findById(userId);
+    } else if (email) {
+      user = await UserModel.findOne({ email });
+    }
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     const withdrawAmount = parseFloat(amount);
-    if (user.funds < withdrawAmount) {
+    if ((user.funds || 0) < withdrawAmount) {
       return res.status(400).json({ message: "Insufficient funds" });
     }
-    user.funds -= withdrawAmount;
+    user.funds = (user.funds || 0) - withdrawAmount;
     await user.save();
     res.json({ message: "Funds withdrawn successfully", funds: user.funds });
   } catch (error) {

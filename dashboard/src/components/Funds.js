@@ -1,28 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import { API_URL } from "../config";
 import axios from "axios";
 import "./Funds.css";
 
 const Funds = () => {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const [addFundsAmount, setAddFundsAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [funds, setFunds] = useState(user?.funds || 0);
+
+  useEffect(() => {
+    if (user?.email || user?.id || user?._id) {
+      axios.get(`${API_URL}/user?email=${encodeURIComponent(user.email || "")}&id=${user.id || user._id || ""}`)
+        .then(res => {
+          if (res.data?.user?.funds !== undefined) {
+            setFunds(res.data.user.funds);
+          }
+        })
+        .catch(err => console.error("Error fetching funds:", err));
+    }
+  }, [user]);
 
   const handleAddFunds = async () => {
     if (addFundsAmount && parseFloat(addFundsAmount) > 0) {
       try {
-        await axios.post("http://localhost:3002/addFunds", {
-          userId: user._id,
+        const userId = user?.id || user?._id;
+        const response = await axios.post(`${API_URL}/addFunds`, {
+          userId,
+          email: user?.email,
           amount: addFundsAmount
         });
+        const updatedFunds = response.data.funds;
         alert(`₹${addFundsAmount} added to your account successfully!`);
+        setFunds(updatedFunds);
+        if (login && user) {
+          login({ ...user, funds: updatedFunds });
+        }
         setAddFundsAmount("");
         setShowAddFunds(false);
       } catch (error) {
-        alert("Error adding funds. Please try again.");
+        alert(error.response?.data?.message || "Error adding funds. Please try again.");
         console.error(error);
       }
     } else {
@@ -33,21 +54,30 @@ const Funds = () => {
   const handleWithdraw = async () => {
     if (withdrawAmount && parseFloat(withdrawAmount) > 0) {
       try {
-        await axios.post("http://localhost:3002/withdrawFunds", {
-          userId: user._id,
+        const userId = user?.id || user?._id;
+        const response = await axios.post(`${API_URL}/withdrawFunds`, {
+          userId,
+          email: user?.email,
           amount: withdrawAmount
         });
+        const updatedFunds = response.data.funds;
         alert(`₹${withdrawAmount} withdrawn from your account successfully!`);
+        setFunds(updatedFunds);
+        if (login && user) {
+          login({ ...user, funds: updatedFunds });
+        }
         setWithdrawAmount("");
         setShowWithdraw(false);
       } catch (error) {
-        alert("Error withdrawing funds. Please check your balance.");
+        alert(error.response?.data?.message || "Error withdrawing funds. Please check your balance.");
         console.error(error);
       }
     } else {
       alert("Please enter a valid amount");
     }
   };
+
+  const formattedFunds = (funds || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
     <>
@@ -106,57 +136,53 @@ const Funds = () => {
           <div className="table">
             <div className="data">
               <p>Available margin</p>
-              <p className="imp colored">4,043.10</p>
+              <p className="imp colored">₹{formattedFunds}</p>
             </div>
             <div className="data">
               <p>Used margin</p>
-              <p className="imp">3,757.30</p>
+              <p className="imp">₹0.00</p>
             </div>
             <div className="data">
               <p>Available cash</p>
-              <p className="imp">4,043.10</p>
+              <p className="imp">₹{formattedFunds}</p>
             </div>
             <hr />
             <div className="data">
               <p>Opening Balance</p>
-              <p>4,043.10</p>
-            </div>
-            <div className="data">
-              <p>Opening Balance</p>
-              <p>3736.40</p>
+              <p>₹{formattedFunds}</p>
             </div>
             <div className="data">
               <p>Payin</p>
-              <p>4064.00</p>
+              <p>₹0.00</p>
             </div>
             <div className="data">
               <p>SPAN</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
             <div className="data">
               <p>Delivery margin</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
             <div className="data">
               <p>Exposure</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
             <div className="data">
               <p>Options premium</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
             <hr />
             <div className="data">
               <p>Collateral (Liquid funds)</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
             <div className="data">
               <p>Collateral (Equity)</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
             <div className="data">
               <p>Total Collateral</p>
-              <p>0.00</p>
+              <p>₹0.00</p>
             </div>
           </div>
         </div>
@@ -164,7 +190,7 @@ const Funds = () => {
         <div className="col">
           <div className="commodity">
             <p>You don't have a commodity account</p>
-            <Link className="btn btn-blue">Open Account</Link>
+            <Link className="btn btn-blue" to="#">Open Account</Link>
           </div>
         </div>
       </div>
