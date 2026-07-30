@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -6,50 +7,50 @@ function Footer() {
       <div className="container border-top mt-5">
         <div className="row mt-5">
           <div className="col">
-            <img src="/media/images/logo.svg" style={{ width: "50%" }} />
+            <img src="media/images/logo.svg" style={{ width: "50%" }} />
             <p>
               &copy; 2010 - 2024, Not Zerodha Broking Ltd. All rights reserved.
             </p>
           </div>
           <div className="col">
             <p>Company</p>
-            <a href="">About</a>
+            <Link to="/about" style={{ textDecoration: "none", color: "#666" }}>About</Link>
             <br />
-            <a href="">Products</a>
+            <Link to="/product" style={{ textDecoration: "none", color: "#666" }}>Products</Link>
             <br />
-            <a href="">Pricing</a>
+            <Link to="/pricing" style={{ textDecoration: "none", color: "#666" }}>Pricing</Link>
             <br />
-            <a href="">Referral programme</a>
+            <a href="https://zerodha.com/refer" style={{ textDecoration: "none", color: "#666" }}>Referral programme</a>
             <br />
-            <a href="">Careers</a>
+            <a href="https://zerodha.com/careers" style={{ textDecoration: "none", color: "#666" }}>Careers</a>
             <br />
-            <a href="">Zerodha.tech</a>
+            <a href="https://zerodha.tech" style={{ textDecoration: "none", color: "#666" }}>Zerodha.tech</a>
             <br />
-            <a href="">Press & media</a>
+            <a href="https://zerodha.com/media" style={{ textDecoration: "none", color: "#666" }}>Press & media</a>
             <br />
-            <a href="">Zerodha cares (CSR)</a>
+            <a href="https://zerodha.com/csr" style={{ textDecoration: "none", color: "#666" }}>Zerodha cares (CSR)</a>
             <br />
           </div>
           <div className="col">
             <p>Support</p>
-            <a href="">Contact</a>
+            <a href="https://zerodha.com/contact" style={{ textDecoration: "none", color: "#666" }}>Contact</a>
             <br />
-            <a href="">Support portal</a>
+            <Link to="/support" style={{ textDecoration: "none", color: "#666" }}>Support portal</Link>
             <br />
-            <a href="">Z-Connect blog</a>
+            <a href="https://zerodha.com/zconnect" style={{ textDecoration: "none", color: "#666" }}>Z-Connect blog</a>
             <br />
-            <a href="">List of charges</a>
+            <a href="https://zerodha.com/charges" style={{ textDecoration: "none", color: "#666" }}>List of charges</a>
             <br />
-            <a href="">Downloads & resources</a>
+            <a href="https://zerodha.com/resources" style={{ textDecoration: "none", color: "#666" }}>Downloads & resources</a>
             <br />
           </div>
           <div className="col">
             <p>Account</p>
-            <a href="">Open an account</a>
+            <Link to="/signup" style={{ textDecoration: "none", color: "#666" }}>Open an account</Link>
             <br />
-            <a href="">Fund transfer</a>
+            <a href="https://zerodha.com/fund-transfer" style={{ textDecoration: "none", color: "#666" }}>Fund transfer</a>
             <br />
-            <a href="">60 day challenge</a>
+            <a href="https://zerodha.com/challenge" style={{ textDecoration: "none", color: "#666" }}>60 day challenge</a>
             <br />
           </div>
         </div>
